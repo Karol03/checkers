@@ -1,5 +1,4 @@
 #include "../inc/GameEngine.h"
-#include <iostream>
 
 #define GAME GameEngine::Game()
 

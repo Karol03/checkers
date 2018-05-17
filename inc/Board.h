@@ -47,6 +47,17 @@ struct BOARD {
 		return true;
 	}
 
+	int countPlayersPawns(Player* player) {
+		int count = 0;
+
+		for(int x=0; x<8; x++)
+			for(int y=0; y<8; y++)
+				if(coord[x][y].color == player->color)
+					count++;
+		return count;
+	}
+
+
 	private:
 	
 	void printStates() {
@@ -124,7 +135,7 @@ struct BOARD {
 					return BEATING;
 				else 
 					return NOT_ALLOWED;
-			} else			// if not abs == abs 
+			} else			 
 				return NOT_ALLOWED;
 		} else {		// if KING
 			return NOT_ALLOWED;
@@ -142,24 +153,44 @@ struct BOARD {
 	}
 
 	bool menJump(int oldX, int oldY, int newX, int newY, COLOR color) {
-		if(abs(oldX-newX) > 2)
+		if(abs(oldX-newX)!=2 || abs(oldY-newY)!=2 )
 			return false;
 
 		if(color == RED) {
-			if(oldX < newX) {
-				if(coord[newX-1][newY-1].color == WHITE) 
-					return true;
+			if(oldX > newX) {
+				if(oldY > newY) {
+					if(coord[oldX-1][oldY-1].color == WHITE)
+						return true;
+				} else {
+					if(coord[oldX-1][oldY+1].color == WHITE)
+						return true;
+				}
 			} else {
-				if(coord[newX+1][newY-1].color == WHITE)
-					return true;
+				if(oldY > newY) {
+					if(coord[oldX+1][oldY-1].color == WHITE)
+						return true;
+				} else {
+					if(coord[oldX+1][oldY+1].color == WHITE)
+						return true;
+				}
 			}
 		} else {
-			if(oldX < newX) {
-				if(coord[newX-1][newY+1].color == RED) 
-					return true;
+			if(oldX > newX) {
+				if(oldY > newY) {
+					if(coord[oldX-1][oldY-1].color == RED)
+						return true;
+				} else {
+					if(coord[oldX-1][oldY+1].color == RED)
+						return true;
+				}
 			} else {
-				if(coord[newX+1][newY+1].color == RED)
-					return true;
+				if(oldY > newY) {
+					if(coord[oldX+1][oldY-1].color == RED)
+						return true;
+				} else {
+					if(coord[oldX+1][oldY+1].color == RED)
+						return true;
+				}
 			}
 		}
 		return false;
@@ -168,22 +199,43 @@ struct BOARD {
 
 	void beating(int oldX, int oldY, int newX, int newY, COLOR color) { 
 		if(color == RED) {
-			if(oldX < newX) {
-				if(coord[newX-1][newY-1].color == WHITE) 
-					coord[newX-1][newY-1].erase();
+			if(oldX > newX) {
+				if(oldY > newY) {
+					if(coord[oldX-1][oldY-1].color == WHITE)
+						coord[oldX-1][oldY-1].erase(); 	
+				} else {
+					if(coord[oldX-1][oldY+1].color == WHITE)
+						coord[oldX-1][oldY+1].erase();
+				}
 			} else {
-				if(coord[newX+1][newY-1].color == WHITE)
-					coord[newX+1][newY-1].erase();
+				if(oldY > newY) {
+					if(coord[oldX+1][oldY-1].color == WHITE)
+						coord[oldX+1][oldY-1].erase();
+				} else {
+					if(coord[oldX+1][oldY+1].color == WHITE)
+						coord[oldX+1][oldY+1].erase();
+				}
 			}
 		} else {
-			if(oldX < newX) {
-				if(coord[newX-1][newY+1].color == RED) 
-					coord[newX-1][newY+1].erase();
+			if(oldX > newX) {
+				if(oldY > newY) {
+					if(coord[oldX-1][oldY-1].color == RED)
+						coord[oldX-1][oldY-1].erase(); 	
+				} else {
+					if(coord[oldX-1][oldY+1].color == RED)
+						coord[oldX-1][oldY+1].erase(); 	
+				}
 			} else {
-				if(coord[newX+1][newY+1].color == RED)
-					coord[newX+1][newY+1].erase();
+				if(oldY > newY) {
+					if(coord[oldX+1][oldY-1].color == RED)
+						coord[oldX+1][oldY-1].erase(); 	
+				} else {
+					if(coord[oldX+1][oldY+1].color == RED)
+						coord[oldX+1][oldY+1].erase(); 	
+				}
 			}
 		}
+		
 	}
 };
 

@@ -13,12 +13,8 @@ class Player {
 	Player(PLAYERTYPE playertype, COLOR color): playertype(playertype)
 	   										  , color(color) {
 											  }			
-	bool makeMove(Player*);
-
 
 	private:
-		void AImakeMove();
-		void MANmakeMove();
 };
 
 

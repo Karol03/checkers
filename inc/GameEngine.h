@@ -3,6 +3,8 @@
 #include <iostream>
 #include "Player.h"
 #include "GraphicModule.h"
+#include "Rules.h"
+#include "AI.h"
 
 enum ERROR_CODE { SUC_OK, QUIT, ERR_CREATE_PLAYERS=200 };
 

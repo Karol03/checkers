@@ -16,27 +16,37 @@ void GameEngine::createPlayers(PLAYERTYPE pt, COLOR cl) {
 }
 
 int GameEngine::play() {
-	bool endGame = false;
+	WAY_TO_END endGame = NOT_END;
 	do{
 		showWindow();
 
 		if(activePlayer->playertype == MAN) { 
 			if(!makeMove(activePlayer))
 				return QUIT;
-			if(activePlayer == playerOne)
-				activePlayer = playerTwo;
-			else
-				activePlayer = playerOne;
+		} else 
+			AI::makeMove(Board, activePlayer);
+
+		if(activePlayer == playerOne) {
+			endGame = RULES::ifAnyMoves(Board, activePlayer, playerTwo);
+			activePlayer = playerTwo;
 		} else {
-			if(activePlayer == playerOne) {
-				activePlayer->makeMove(playerTwo);
-				activePlayer = playerTwo;
-			} else {
-				activePlayer->makeMove(playerOne);	
-				activePlayer = playerOne;
-			}
+			endGame = RULES::ifAnyMoves(Board, activePlayer, playerOne);
+			activePlayer = playerOne;
 		}
-	}while(!endGame);
+	std::cout << endGame << "\n";
+	}while(endGame == NOT_END);
+	
+	switch(endGame) {
+		case LOSE:
+			break;
+		case DRAW:
+			break;
+		case WIN:
+			break;
+		default:
+			break;
+	}
+
 	return SUC_OK;
 }
 

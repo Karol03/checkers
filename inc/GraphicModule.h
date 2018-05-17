@@ -109,8 +109,6 @@ class Graphic {
 				}
 			}
 		}
-		
-		std::cout << "END Move \n";		
 		return true;
 	}
 };
