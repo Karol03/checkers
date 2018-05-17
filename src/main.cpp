@@ -1,7 +1,9 @@
 #include "../inc/GameEngine.h"
 #include <iostream>
 
+#define GAME GameEngine::Game()
 
 int main(int argc, char* argv[]) {
-	return GameEngine::Game().play();
+	GAME.setGame();
+	return GAME.play();
 }
