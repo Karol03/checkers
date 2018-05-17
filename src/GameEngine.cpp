@@ -25,6 +25,9 @@ int GameEngine::play() {
 				return QUIT;
 		} else 
 			AI::makeMove(Board, activePlayer);
+		
+		if(RULES::makeKings(Board))
+			refreshSprites();
 
 		if(activePlayer == playerOne) {
 			endGame = RULES::ifAnyMoves(Board, activePlayer, playerTwo);
@@ -33,7 +36,7 @@ int GameEngine::play() {
 			endGame = RULES::ifAnyMoves(Board, activePlayer, playerOne);
 			activePlayer = playerOne;
 		}
-	std::cout << endGame << "\n";
+		
 	}while(endGame == NOT_END);
 	
 	switch(endGame) {

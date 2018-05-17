@@ -27,6 +27,22 @@ class RULES {
 			return NOT_END;
 		}
 
+		static bool makeKings(BOARD& board) {
+			int y=0;
+			for(int x=0; x<8; x++) 
+				if(board.get(x,y).color == WHITE) {
+					board.set(x,y).type = KING;
+					return true;
+				}
+			y=7;
+			for(int x=0; x<8; x++) 
+				if(board.get(x,y).color == RED) {
+					board.set(x,y).type = KING;
+					return true;
+				}
+
+			return false;		
+		}
 
 	private:
 		static bool withoutMoves(BOARD& board, Player* player) {

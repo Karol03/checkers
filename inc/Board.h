@@ -26,8 +26,13 @@ struct BOARD {
 	}
 	
 	bool move(int oldX, int oldY, int newX, int newY) {
+		MOVE_TYPES playerMove = moveAllowed(oldX, oldY, newX, newY);
 		
-		switch(moveAllowed(oldX,oldY,newX,newY)) {
+		if(playerHasBeating(oldX, oldY))
+			while(playerMove != BEATING)
+				playerMove = moveAllowed(oldX, oldY, newX, newY);
+
+		switch(playerMove) {
 			case NORMAL:
 				coord[newX][newY] = coord[oldX][oldY];
 				coord[newX][newY].setCoord(newX, newY);
@@ -39,11 +44,12 @@ struct BOARD {
 				coord[newX][newY].setCoord(newX, newY);
 				coord[oldX][oldY].erase();
 				beating(oldX, oldY, newX, newY, coord[newX][newY].color);
-				break;	
+				break;
 
 			case NOT_ALLOWED:
 				return false;
 		}
+		
 		return true;
 	}
 
@@ -127,21 +133,18 @@ struct BOARD {
 		
 		PAWN *activePawn = new PAWN;	
 		*activePawn = coord[oldX][oldY];
-		if(activePawn->type == MEN) {
-			if(abs(newX-oldX) == abs(newY-oldY)) {
+		if(abs(newX-oldX) == abs(newY-oldY)) {
+			if(activePawn->type == MEN) {
 				if(menNormalStep(oldY, newY, activePawn->color)) 
 					return NORMAL;
 				else if(menJump(oldX, oldY, newX, newY, activePawn->color))
 					return BEATING;
 				else 
 					return NOT_ALLOWED;
-			} else			 
-				return NOT_ALLOWED;
-		} else {		// if KING
-			return NOT_ALLOWED;
-
+			} else if(activePawn->type == KING) {
+				return kingStep(oldX, oldY, newX, newY);
+			}
 		}
-	
 		return NOT_ALLOWED;
 	}
 			
@@ -236,6 +239,68 @@ struct BOARD {
 			}
 		}
 		
+	}
+
+	MOVE_TYPES kingStep(int oldX, int oldY, int newX, int newY) {
+		bool oponentPawn = false;
+		int jump = abs(oldX-newX);
+		int x,y;
+
+		for(int i=1; i<=jump; i++) {
+			if(oldX < newX) {
+				if(oldY < newY) {
+					if(coord[oldX+i][oldY+i].color == coord[oldX][oldY].color)
+						return NOT_ALLOWED;
+					else if(!oponentPawn && coord[oldX+i][oldY+i].type!=FREE){
+						oponentPawn = true;
+						x = oldX+i;
+						y = oldY+i;
+					}
+				} else {
+					if(coord[oldX+i][oldY-i].color == coord[oldX][oldY].color)
+						return NOT_ALLOWED;
+					else if(!oponentPawn && coord[oldX+i][oldY-i].type!=FREE){
+						oponentPawn = true;
+						x = oldX+i;
+						y = oldY-i;	
+					}
+				}
+			} else {
+				if(oldY < newY) {
+					if(coord[oldX-i][oldY+i].color == coord[oldX][oldY].color)
+						return NOT_ALLOWED;
+					else if(!oponentPawn && coord[oldX-i][oldY+i].type!=FREE){
+						oponentPawn = true;
+						x = oldX-i;
+						y = oldY+i;
+					}
+				} else {
+					if(coord[oldX-i][oldY-i].color == coord[oldX][oldY].color)
+						return NOT_ALLOWED;
+					else if(!oponentPawn && coord[oldX-i][oldY-i].type!=FREE){
+						oponentPawn = true;
+						x = oldX-i;
+						y = oldY-i;
+					} 
+				}
+			}
+		}
+		
+		if(!oponentPawn)
+			return NORMAL;
+		else {
+			coord[x][y].erase();
+			return BEATING;
+		}
+
+		return NOT_ALLOWED;
+	}
+
+
+	bool playerHasBeating(int x, int y) {
+		
+
+		return false;
 	}
 };
 

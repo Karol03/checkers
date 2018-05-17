@@ -51,16 +51,12 @@ class Graphic {
 			window->display();
 	}
 
-	void refreshSprites() {
-		setPawnsSprite(); 
-	}
 
 	private:
 
 	void drawPawns() {
 		int red=0;
 		int white=12;
-		refreshSprites();		
 		for(int x=0; x<8; x++)
 			for(int y=0; y<8; y++) {
 				if(Board.get(x,y).type!=NONE && Board.get(x,y).type!=FREE) {
@@ -80,6 +76,7 @@ class Graphic {
 	}
 
 	void setPawnsSprite() {
+		std::cout << "HERE\n";
 		int red=0;
 		int white=12;
 		for(int x=0; x<8; x++)
@@ -91,14 +88,17 @@ class Graphic {
 						pawn[red].setTexture(*red_king);
 					}
 					red++;
-				} else if(Board.get(x,y).color == WHITE){
+					std::cout << red << "\n";
+				} else {
 					if(Board.get(x,y).type == MEN) {
 						pawn[white].setTexture(*white_men);
 					} else {
 						pawn[white].setTexture(*white_king);
 					}
 					white++;
+					std::cout << white << "\n";
 				}
+		std::cout << "BYE!\n";
 	}
 
 
