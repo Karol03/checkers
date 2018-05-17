@@ -1,41 +1,58 @@
 #include "../inc/GameEngine.h"
 
-void GameEngine::createPlayers(PLAYERTYPE pt1, PLAYERTYPE pt2) {
+
+void GameEngine::createPlayers(PLAYERTYPE pt, COLOR cl) {
 	if(playerOne || playerTwo || activePlayer)
 		throw ERR_CREATE_PLAYERS;
-	playerOne = new Player(pt1, RED);
-	playerTwo = new Player(pt2, WHITE);
+
+	if(cl == RED) {
+		playerOne = new Player(MAN, RED);
+		playerTwo = new Player(pt, WHITE);
+	} else {
+		playerOne = new Player(pt, RED);
+		playerTwo = new Player(MAN, WHITE);
+	}
 	activePlayer = playerOne;	
 }
 
-int GameEngine::setGame() {
-	setPlayers();
-	createGameWindow();
-	return SUC_OK;
-}
-
 int GameEngine::play() {
-	bool endGame;
+	bool endGame = false;
 	do{
-		if(!showWindow())
+		if(!showWindow(playerOne, playerTwo))
 			return QUIT;
-		
-		endGame = activePlayer->makeMove();
-		if(activePlayer == playerOne)
-			activePlayer = playerTwo;
-		else
-			activePlayer = playerOne;
+
+		if(activePlayer->playertype == MAN) {
+			if(activePlayer == playerOne) {
+				makeMove(activePlayer, playerTwo);
+				activePlayer = playerTwo;
+			} else {
+				makeMove(activePlayer, playerOne);	
+				activePlayer = playerOne;
+			}
+		} else {
+			if(activePlayer == playerOne) {
+				activePlayer->makeMove(playerTwo);
+				activePlayer = playerTwo;
+			} else {
+				activePlayer->makeMove(playerOne);	
+				activePlayer = playerOne;
+			}
+		}
 	}while(!endGame);
 	return SUC_OK;
 }
 
-void GameEngine::setPlayers() {
-	
-	// wyswietl okienko z wyborem graczy
+PLAYERTYPE GameEngine::setOponentType() {
+	// wyswietl okienko z wyborem VS AI lub VS gracz
 	// utworz graczy na podstawie powyzszego wyboru 
+	return MAN;
 }
 
-void GameEngine::createGameWindow() {
-	// stworz okno gry 
-	// narysuj szachownice i pionki
+
+COLOR GameEngine::setPlayerColor() {
+	// wyswietl okno
+	// jezeli bialy ustaw bialy
+	// jezeli nie ustaw czerwony
+	return RED;
 }
+

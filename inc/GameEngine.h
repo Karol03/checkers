@@ -4,29 +4,30 @@
 #include "Player.h"
 #include "GraphicModule.h"
 
-enum ERROR_CODE { SUC_OK, QUIT, ERR_CREATE_PLAYERS=201 };
+enum ERROR_CODE { SUC_OK, QUIT, ERR_CREATE_PLAYERS=200 };
 
 
 class GameEngine : private Graphic {
 	
 	GameEngine():playerOne(nullptr), playerTwo(nullptr), 
 			     activePlayer(nullptr) {
-				 }
+		createPlayers(setOponentType(), setPlayerColor());				
+	}
 	
 	Player* playerOne;
 	Player* playerTwo;
 	Player* activePlayer;
 
-	void createPlayers(PLAYERTYPE, PLAYERTYPE);
-	void setPlayers();
-	void createGameWindow();
+	void createPlayers(PLAYERTYPE, COLOR);
+	PLAYERTYPE setOponentType();
+	COLOR setPlayerColor();
+
 
 	public:
 	
 	~GameEngine() {
 		delete playerOne;
 		delete playerTwo;
-		delete activePlayer;
 	}
 
 	static GameEngine& Game() {
@@ -34,7 +35,6 @@ class GameEngine : private Graphic {
 		return game;
 	}
 
-	int setGame();
 	int play();	
 };
 
