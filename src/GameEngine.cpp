@@ -7,9 +7,9 @@ void GameEngine::createPlayers(PLAYERTYPE pt, COLOR cl) {
 
 	if(cl == RED) {
 		playerOne = new Player(MAN, RED);
-		playerTwo = new Player(pt, WHITE);
+		playerTwo = new Player(MAN, WHITE);
 	} else {
-		playerOne = new Player(pt, RED);
+		playerOne = new Player(MAN, RED);
 		playerTwo = new Player(MAN, WHITE);
 	}
 	activePlayer = playerOne;	
@@ -18,17 +18,15 @@ void GameEngine::createPlayers(PLAYERTYPE pt, COLOR cl) {
 int GameEngine::play() {
 	bool endGame = false;
 	do{
-		if(!showWindow(playerOne, playerTwo))
-			return QUIT;
+		showWindow();
 
-		if(activePlayer->playertype == MAN) {
-			if(activePlayer == playerOne) {
-				makeMove(activePlayer, playerTwo);
+		if(activePlayer->playertype == MAN) { 
+			if(!makeMove(activePlayer))
+				return QUIT;
+			if(activePlayer == playerOne)
 				activePlayer = playerTwo;
-			} else {
-				makeMove(activePlayer, playerOne);	
+			else
 				activePlayer = playerOne;
-			}
 		} else {
 			if(activePlayer == playerOne) {
 				activePlayer->makeMove(playerTwo);
