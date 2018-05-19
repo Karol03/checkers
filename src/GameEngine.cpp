@@ -16,38 +16,36 @@ void GameEngine::createPlayers(PLAYERTYPE pt, COLOR cl) {
 }
 
 int GameEngine::play() {
-	WAY_TO_END endGame = NOT_END;
+	ENDGAME endGame = NOT_END;
 	do{
-		showWindow();
-
-		if(activePlayer->playertype == MAN) { 
-			if(!makeMove(activePlayer))
-				return QUIT;
-		} else 
-			AI::makeMove(Board, activePlayer);
-		
+		do{
+			showWindow();
+			if(activePlayer->playertype == MAN) {  
+				if(!makeMove(activePlayer))
+					return QUIT;
+			} else 
+				AI::makeMove(Board, activePlayer);
+		}while(Board.playerHasNextBeating());
+	
 		if(RULES::makeKings(Board))
 			refreshSprites();
 
-		if(activePlayer == playerOne) {
-			endGame = RULES::ifAnyMoves(Board, activePlayer, playerTwo);
+		if(activePlayer == playerOne) 
 			activePlayer = playerTwo;
-		} else {
-			endGame = RULES::ifAnyMoves(Board, activePlayer, playerOne);
+		else 
 			activePlayer = playerOne;
-		}
-		
-	}while(endGame == NOT_END);
+	endGame = RULES::ifEND(Board);
+	}while(endGame == NOT_END);	
 	
 	switch(endGame) {
-		case LOSE:
+		case RED_WIN:
 			break;
 		case DRAW:
 			break;
-		case WIN:
+		case WHITE_WIN:
 			break;
 		default:
-			break;
+			throw ERR_WHO_WINS;
 	}
 
 	return SUC_OK;

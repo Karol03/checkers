@@ -6,7 +6,7 @@
 #include "Rules.h"
 #include "AI.h"
 
-enum ERROR_CODE { SUC_OK, QUIT, ERR_CREATE_PLAYERS=200 };
+enum ERROR_CODE { SUC_OK, QUIT, ERR_CREATE_PLAYERS=200, ERR_WHO_WINS=300 };
 
 
 class GameEngine : private Graphic {
