@@ -25,17 +25,20 @@ class RULES {
 			int y=0;
 			for(int x=0; x<8; x++) 
 				if(board.get(x,y).color == WHITE) {
-					board.set(x,y).type = KING;
-					return true;
+					if(board.get(x,y).type == MEN) {
+						board.set(x,y).type = KING;
+						return true;
+					}
 				}
 			y=7;
 			for(int x=0; x<8; x++) 
 				if(board.get(x,y).color == RED) {
-					board.set(x,y).type = KING;
-					return true;
+					if(board.get(x,y).type == MEN) {
+						board.set(x,y).type = KING;
+						return true;
+					}
 				}
-
-			return false;		
+			return false;
 		}
 
 	private:

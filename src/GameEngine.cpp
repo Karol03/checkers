@@ -5,13 +5,11 @@ void GameEngine::createPlayers(PLAYERTYPE pt, COLOR cl) {
 	if(playerOne || playerTwo || activePlayer)
 		throw ERR_CREATE_PLAYERS;
 
-	if(cl == RED) {
-		playerOne = new Player(MAN, RED);
-		playerTwo = new Player(MAN, WHITE);
-	} else {
-		playerOne = new Player(MAN, RED);
-		playerTwo = new Player(MAN, WHITE);
-	}
+
+	playerOne = new Player(AI, RED);
+	playerTwo = new Player(MAN, WHITE);
+
+	AIplayer.set(RED);
 	activePlayer = playerOne;	
 }
 
@@ -24,9 +22,9 @@ int GameEngine::play() {
 				if(!makeMove(activePlayer))
 					return QUIT;
 			} else 
-				AI::makeMove(Board, activePlayer);
+				AIplayer.makeMove(Board);
 		}while(Board.playerHasNextBeating());
-	
+		
 		if(RULES::makeKings(Board))
 			refreshSprites();
 

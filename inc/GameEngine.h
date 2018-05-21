@@ -19,6 +19,7 @@ class GameEngine : private Graphic {
 	Player* playerOne;
 	Player* playerTwo;
 	Player* activePlayer;
+	AIPlayer AIplayer;
 
 	void createPlayers(PLAYERTYPE, COLOR);
 	PLAYERTYPE setOponentType();

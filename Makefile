@@ -2,7 +2,7 @@
 
 CC=g++
 CPPFLAGS=-pedantic -Wall
-objects=obj/main.o obj/GameEngine.o obj/GraphicModule.o obj/Board.o
+objects=obj/main.o obj/GameEngine.o obj/GraphicModule.o obj/Board.o obj/AI.o
 SFMLLIB=-lsfml-graphics -lsfml-window -lsfml-system
 
 checkers: $(objects)

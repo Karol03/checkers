@@ -33,6 +33,26 @@ bool BOARD::move(int oldX, int oldY, int newX, int newY) {
 	return true;
 }
 
+int BOARD::countPlayersMENS(COLOR color) {
+	int count = 0;
+
+	for(int x=0; x<8; x++)
+		for(int y=0; y<8; y++)
+			if(coord[x][y].color==color && coord[x][y].type==MEN)
+				count++;
+	return count;
+}
+
+int BOARD::countPlayersKINGS(COLOR color) {
+	int count = 0;
+
+	for(int x=0; x<8; x++)
+		for(int y=0; y<8; y++)
+			if(coord[x][y].color==color && coord[x][y].type==KING)
+				count++;
+	return count;
+}
+
 int BOARD::countPlayersPawns(COLOR color) {
 	int count = 0;
 

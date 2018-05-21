@@ -2,21 +2,24 @@
 
 
 Graphic::Graphic() {
-	window = new sf::RenderWindow(sf::VideoMode(1000,1000), "Checkers");
+	window = new sf::RenderWindow(sf::VideoMode(BOARD_SIZE
+												,BOARD_SIZE)
+									, "Checkers");
 	board_texture = new sf::Texture();
-	board_texture->loadFromFile("images/board.png");
+	board_texture->loadFromFile(BOARD_TEXTURE);
 
 	red_men = new sf::Texture();
-	red_men->loadFromFile("images/red.png");
+	red_men->loadFromFile(RED_MEN_TEXTURE);
 
 	white_men = new sf::Texture();
-	white_men->loadFromFile("images/white.png");
+	white_men->loadFromFile(WHITE_MEN_TEXTURE);
 
 	red_king = new sf::Texture();
-	red_king->loadFromFile("images/red_king.png");
+	red_king->loadFromFile(RED_KING_TEXTURE);
 
 	white_king = new sf::Texture();
-	white_king->loadFromFile("images/white_king.png");
+	white_king->loadFromFile(WHITE_KING_TEXTURE);
+
 	board.setTexture(*board_texture);
 	setPawnsSprite();
 }
@@ -107,8 +110,8 @@ bool Graphic::makeMove(Player* activePlayer) {
 				if(event.mouseButton.button == sf::Mouse::Left) {
 					sf::Vector2f mousePos = window->mapPixelToCoords(
 									sf::Mouse::getPosition(*window));
-					Xcoo = int(mousePos.x)/124;
-					Ycoo = int(mousePos.y)/124;
+					Xcoo = int(mousePos.x)/MENS_SIZE;
+					Ycoo = int(mousePos.y)/MENS_SIZE;
 					if(activePlayer->color 
 									== Board.get(Xcoo,Ycoo).color) {
 							if(!nextBeat && !mustBeat) {

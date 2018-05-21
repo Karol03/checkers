@@ -4,6 +4,14 @@
 #include "Player.h"
 #include "Board.h"
 
+#define BOARD_TEXTURE "images/board.png"
+#define RED_MEN_TEXTURE "images/red.png"
+#define RED_KING_TEXTURE "images/red_king.png"
+#define WHITE_MEN_TEXTURE "images/white.png"
+#define WHITE_KING_TEXTURE "images/white_king.png"
+#define BOARD_SIZE 1000
+#define MENS_SIZE 124
+
 class Graphic {
 
 	protected:
@@ -27,6 +35,7 @@ class Graphic {
 	void refreshSprites() {
 		setPawnsSprite(); 
 	}
+
 
 	private:
 

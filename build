@@ -2,5 +2,7 @@
 
 clear
 make clean
-make
-
+if make; then \   
+gdb checkers \
+echo "SUCCESSFUL" ; \
+else echo "you fail" ; fi

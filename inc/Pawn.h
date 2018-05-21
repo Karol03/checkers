@@ -3,7 +3,7 @@
 
 enum COLOR { BLANK, RED=1, WHITE };
 
-enum PAWNTYPE { NONE, FREE, MEN=10, KING=100 };
+enum PAWNTYPE { NONE, FREE, MEN=5, KING=10 };
 
 
 struct PAWN {

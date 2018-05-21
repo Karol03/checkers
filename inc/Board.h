@@ -28,13 +28,25 @@ struct BOARD {
 		setRedPawns();
 		setWhitePawns();
 	}
-	
+
+	BOARD& operator=(const BOARD& board) {
+		for(int i=0; i<8; i++)
+			for(int j=0; j<8; j++)
+				coord[i][j] = board.get(i,j);
+		xNext = board.xNext;
+		yNext = board.yNext;
+		return *this;
+	}
+
 	bool move(int oldX, int oldY, int newX, int newY);	
 	int countPlayersPawns(COLOR color);
+	int countPlayersMENS(COLOR color);
+	int countPlayersKINGS(COLOR color);
 	bool playerHasNextBeating();
 	bool ifBeating(int oldX,  int oldY, int newX, int newY);
 	bool beatingFromPosition(int x, int y);
 	bool playerHasBeating(COLOR playerColor);
+	
 
 	private:
 	int beatCoordX;
@@ -61,6 +73,7 @@ struct BOARD {
 	MOVE_TYPES kingMoveDL(int x, int y, int d);
 	MOVE_TYPES kingMoveDR(int x, int y, int d);
 };
+
 
 
 
