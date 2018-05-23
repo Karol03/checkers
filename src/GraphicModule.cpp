@@ -110,8 +110,8 @@ bool Graphic::makeMove(Player* activePlayer) {
 				if(event.mouseButton.button == sf::Mouse::Left) {
 					sf::Vector2f mousePos = window->mapPixelToCoords(
 									sf::Mouse::getPosition(*window));
-					Xcoo = int(mousePos.x)/MENS_SIZE;
-					Ycoo = int(mousePos.y)/MENS_SIZE;
+					Xcoo = (int(mousePos.x)-73)/MENS_SIZE;
+					Ycoo = (int(mousePos.y)-73)/MENS_SIZE;
 					if(activePlayer->color 
 									== Board.get(Xcoo,Ycoo).color) {
 							if(!nextBeat && !mustBeat) {

@@ -7,7 +7,7 @@
 #include <vector>
 #include <ctime>
 
-#define DEPTH 5 
+#define DEPTH 12
 
 class AIPlayer {
 	COLOR AIcolor;
@@ -24,14 +24,19 @@ class AIPlayer {
 	AIPlayer() {
 		srand(time(NULL));
 	}
+
+
 	private:
+	bool Aset;
+	bool Bset;
+
 	AIMoves minmaxForBestMove(BOARD board, COLOR color, 
-							int depth, bool isMax);
+							int depth, bool isMax, int& A, int& B);
 
 	int estimateResult(BOARD board) const;
 
-	AIMoves max(BOARD board, COLOR color, int depth);
-	AIMoves min(BOARD board, COLOR color, int depth);
+	AIMoves max(BOARD board, COLOR color, int depth, int& A, int& B);
+	AIMoves min(BOARD board, COLOR color, int depth, int& A, int& B);
 
 
 	int possibleMoves(const BOARD& board, const PAWN& pawn,

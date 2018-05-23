@@ -1,6 +1,5 @@
 #include "../inc/Board.h"
-	
-
+#include <iostream>
 	
 bool BOARD::move(int oldX, int oldY, int newX, int newY) {
 	MOVE_TYPES playerMove = moveAllowed(oldX, oldY, newX, newY);
@@ -22,7 +21,6 @@ bool BOARD::move(int oldX, int oldY, int newX, int newY) {
 				beating(oldX, oldY, newX, newY, coord[newX][newY].color);
 			else
 				coord[beatCoordX][beatCoordY].erase();
-			
 			xNext = newX;
 			yNext = newY;
 			break;
@@ -260,7 +258,9 @@ MOVE_TYPES BOARD::kingMoveUL(int x, int y, int d) {
 			}
 		}
 	}
-	return BEATING;
+	if(setOponent)
+		return BEATING;
+	return NORMAL;
 }
 
 MOVE_TYPES BOARD::kingMoveUR(int x, int y, int d) {
@@ -279,7 +279,9 @@ MOVE_TYPES BOARD::kingMoveUR(int x, int y, int d) {
 			}
 		}
 	}
-	return BEATING;
+	if(setOponent)
+		return BEATING;
+	return NORMAL;
 }
 
 MOVE_TYPES BOARD::kingMoveDL(int x, int y, int d) {
@@ -298,7 +300,9 @@ MOVE_TYPES BOARD::kingMoveDL(int x, int y, int d) {
 			}
 		}
 	}
-	return BEATING;
+	if(setOponent)
+		return BEATING;
+	return NORMAL;
 }
 
 MOVE_TYPES BOARD::kingMoveDR(int x, int y, int d) {
@@ -317,7 +321,9 @@ MOVE_TYPES BOARD::kingMoveDR(int x, int y, int d) {
 			}
 		}
 	}
-	return BEATING;
+	if(setOponent)
+		return BEATING;
+	return NORMAL;
 }
 
 MOVE_TYPES BOARD::kingStep(int oldX, int oldY, int newX, int newY) {
@@ -340,8 +346,11 @@ MOVE_TYPES BOARD::kingStep(int oldX, int oldY, int newX, int newY) {
 
 
 bool BOARD::playerHasNextBeating() {
-	if(beatingFromPosition(xNext, yNext))
+
+	if(beatingFromPosition(xNext, yNext)) {
+		std::cout << "NEXT BEATING? " << xNext << "." << yNext << "\n";
 		return true;
+	}
 	xNext = yNext = -1;
 	return false;
 }
@@ -350,8 +359,9 @@ bool BOARD::playerHasBeating(COLOR playerColor) {
 	for(int i=0; i<8; i++)
 		for(int j=0; j<8; j++)
 			if(coord[i][j].color == playerColor)
-				if(beatingFromPosition(i,j))
+				if(beatingFromPosition(i,j)) {
 					return true;
+				}
 	return false;
 }
 

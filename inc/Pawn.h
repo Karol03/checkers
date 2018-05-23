@@ -33,8 +33,8 @@ struct PAWN {
 	}
 
 	void countPawnPosition() {
-		xPos = xCoord*124;
-		yPos = yCoord*124;
+		xPos = xCoord*107+73;
+		yPos = yCoord*107+73;
 	}
 
 	void erase() {

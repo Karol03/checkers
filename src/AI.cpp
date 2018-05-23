@@ -1,6 +1,7 @@
 #include "../inc/AI.h"	
-//#include <iostream>
+#include <iostream>
 #include <random>
+
 
 /*
 void AIPlayer::printMove(AIMoves move) {
@@ -15,38 +16,40 @@ static int COUNT = 0;
 	std::cout << "score: " << move.score;
 	std::cout<<"\n\n";
 }
-
+*/
 void AIPlayer::bestMoveInfo(AIMoves bestMove) {
-	std::cout << "   |BEST MOVE INFOi| \n"
+	std::cout << "   |BEST MOVE INFO| \n"
 			<< "s: " << bestMove.score << " | x: " 
 			<< bestMove.x << " | y: " << bestMove.y 
 			<< " | newX: " << bestMove.newX 
 			<< " | newY: " << bestMove.newY << "\n";
 }
-*/
 
 void AIPlayer::makeMove(BOARD& board) { 
 	AIMoves bestMove;
-   	bestMove = minmaxForBestMove(board, AIcolor, DEPTH, true);
-	bestMove.score = estimateResult(bestMove.board);
+	int A, B;
+	A = B = 0;
+	Aset = Bset = false;
+	bestMove = minmaxForBestMove(board, AIcolor, DEPTH, true, A, B);
 	bestMove.calculateBestMove(board, AIcolor);
+	bestMoveInfo(bestMove);
 	board.move(bestMove.x, bestMove.y, bestMove.newX, bestMove.newY);
 }
 
 AIMoves AIPlayer::minmaxForBestMove(BOARD board, COLOR color, 
-									int depth, bool isMax) {
+									int depth, bool isMax,
+									int& A, int& B) {
 	if(depth<=0 || RULES::ifEND(board)!=NOT_END) { 
 		AIMoves myMove;
 		myMove.board = board;
 		myMove.score = estimateResult(board);
 		return myMove;
-	}
-	
+	}	
 	
 	if(isMax)  
-		return max(board, color, depth);	
+		return max(board, color, depth, A, B);	
 	else 
-		return  min(board, color, depth);	
+		return  min(board, color, depth, A, B);	
 
 }
 
@@ -86,11 +89,13 @@ int AIPlayer::estimateResult(BOARD board) const {
 	}
 }
 
-AIMoves AIPlayer::max(BOARD board, COLOR color, int depth) {
+AIMoves AIPlayer::max(BOARD board, COLOR color, int depth, int& A, int& B) {
 	std::vector<AIMoves> allMoves;
 	bool isBeat = false;
 	depth -= 1;
-	
+	AIMoves ABmove;
+	ABmove.score = -9999;
+
 	for(int i=0; i<8; i++)
 		for(int j=0; j<8; j++)
 			if(board.get(i,j).color == color) 
@@ -103,18 +108,28 @@ AIMoves AIPlayer::max(BOARD board, COLOR color, int depth) {
 				if(board.get(i,j).color == color) 
 					possibleMoves(board, board.set(i,j), allMoves);
 	
-	for(AIMoves& nextMove : allMoves)  
+	for(AIMoves& nextMove : allMoves)  {
 		nextMove.set(minmaxForBestMove(nextMove.board, 
-						opositeColor(color), depth, false));	
-	
-	return getMaxMoves(allMoves);
+						opositeColor(color), depth, false, A, B));	
+		if(nextMove > ABmove)
+			ABmove = nextMove;
+		if((ABmove>=B) && Bset) 
+			return ABmove;
+		if(nextMove>A || !Aset) {
+			Aset = true;
+			A = nextMove.score;
+		}	
+	}
+	return ABmove;
 }
 
-AIMoves AIPlayer::min(BOARD board, COLOR color, int depth) {
+AIMoves AIPlayer::min(BOARD board, COLOR color, int depth, int& A, int& B) {
 	std::vector<AIMoves> allMoves;
 	bool isBeat = false;
 	depth -= 1;
-	
+	AIMoves ABmove;
+	ABmove.score = 9999;
+
 	for(int i=0; i<8; i++)
 		for(int j=0; j<8; j++)
 			if(board.get(i,j).color == color) 
@@ -127,11 +142,20 @@ AIMoves AIPlayer::min(BOARD board, COLOR color, int depth) {
 				if(board.get(i,j).color == color) 
 					possibleMoves(board, board.set(i,j), allMoves);
 	
-	for(AIMoves& nextMove : allMoves)  
+	for(AIMoves& nextMove : allMoves) {   
 		nextMove.set(minmaxForBestMove(nextMove.board, 
-						opositeColor(color), depth, true));			
-
-	return getMinMoves(allMoves);
+						opositeColor(color), depth, true, A, B));			
+		if(nextMove < ABmove)
+			ABmove = nextMove;
+		if((ABmove<=A) && Aset) 
+			return ABmove;
+		if(nextMove<B || !Bset) {
+			Bset = true;
+			B = nextMove.score;
+		}	
+	}
+	
+	return ABmove;
 }
 
 int AIPlayer::possibleMoves(const BOARD& board, const PAWN& pawn,

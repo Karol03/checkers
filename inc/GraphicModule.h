@@ -10,7 +10,7 @@
 #define WHITE_MEN_TEXTURE "images/white.png"
 #define WHITE_KING_TEXTURE "images/white_king.png"
 #define BOARD_SIZE 1000
-#define MENS_SIZE 124
+#define MENS_SIZE 107
 
 class Graphic {
 

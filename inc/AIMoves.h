@@ -23,6 +23,12 @@ struct AIMoves {
 		score = -99;
 	}
 
+	bool operator<=(const int& integer ) {
+		return score<=integer;	}
+	
+	bool operator>=(const int& integer ) {
+		return score>=integer;	}
+	
 	bool operator==(const AIMoves& nextMove) {
 		return (score==nextMove.score ? true : false);	}
 	
@@ -31,6 +37,12 @@ struct AIMoves {
 	
 	bool operator>(const AIMoves& nextMove) {
 		return score>nextMove.score;	}
+	
+	bool operator<(const int& intiger) {
+		return score<intiger;	}
+	
+	bool operator>(const int& intiger) {
+		return score>intiger;	}
 
 	void set(const AIMoves& prevMove) {
 		score = prevMove.score;
