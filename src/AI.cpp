@@ -1,41 +1,57 @@
 #include "../inc/AI.h"	
-#include <iostream>
+//#include <iostream>
+#include <random>
 
+/*
+void AIPlayer::printMove(AIMoves move) {
+static int COUNT = 0;
 
-void AIPlayer::makeMove(BOARD& board) { 
-	AIMoves bestMove;
-   	bestMove = minmaxForBestMove(board, AIcolor, DEPTH);
-	bestMove.calculateBestMove(board, AIcolor);
+		std::cout << "THIS IS THE " << ++COUNT << " RUN\n";
+	for(int i=0; i<8; i++) {
+		for(int j=0; j<8; j++)
+			std::cout << move.board.get(j,i).color << " ";
+		std::cout << "\n"; 
+	}
+	std::cout << "score: " << move.score;
+	std::cout<<"\n\n";
+}
+
+void AIPlayer::bestMoveInfo(AIMoves bestMove) {
 	std::cout << "   |BEST MOVE INFOi| \n"
 			<< "s: " << bestMove.score << " | x: " 
 			<< bestMove.x << " | y: " << bestMove.y 
 			<< " | newX: " << bestMove.newX 
 			<< " | newY: " << bestMove.newY << "\n";
+}
+*/
+
+void AIPlayer::makeMove(BOARD& board) { 
+	AIMoves bestMove;
+   	bestMove = minmaxForBestMove(board, AIcolor, DEPTH, true);
+	bestMove.score = estimateResult(bestMove.board);
+	bestMove.calculateBestMove(board, AIcolor);
 	board.move(bestMove.x, bestMove.y, bestMove.newX, bestMove.newY);
 }
 
-
-AIMoves AIPlayer::minmaxForBestMove(BOARD& board, COLOR color, 
+AIMoves AIPlayer::minmaxForBestMove(BOARD board, COLOR color, 
 									int depth, bool isMax) {
-	
-	if(depth<=0 || board.countPlayersPawns(RED)==0 ||
-					board.countPlayersPawns(WHITE)==0) { 
-		color = opositeColor(color);
+	if(depth<=0 || RULES::ifEND(board)!=NOT_END) { 
 		AIMoves myMove;
 		myMove.board = board;
 		myMove.score = estimateResult(board);
 		return myMove;
 	}
 	
-	if(isMax)
-		return max(board, color, depth);
+	
+	if(isMax)  
+		return max(board, color, depth);	
 	else 
-		return min(board, color, depth);
+		return  min(board, color, depth);	
 
 }
 
 
-int AIPlayer::estimateResult(BOARD& board) {	
+int AIPlayer::estimateResult(BOARD board) const {	
 	int WP = 0;
 	int RP = 0;
 	switch(RULES::ifEND(board)) {
@@ -55,10 +71,11 @@ int AIPlayer::estimateResult(BOARD& board) {
 			return 0;
 
 		case NOT_END:
-			WP = board.countPlayersMENS(WHITE)*1+
-					board.countPlayersKINGS(WHITE)*5;
-			RP = board.countPlayersMENS(RED)*1+
-					board.countPlayersKINGS(RED)*5;
+			WP = board.countPlayersMENS(WHITE);
+			WP += board.countPlayersKINGS(WHITE)*5;
+			RP = board.countPlayersMENS(RED);
+			RP += board.countPlayersKINGS(RED)*5;
+			
 			if(AIcolor == WHITE)
 				return WP-RP;
 			else
@@ -72,84 +89,81 @@ int AIPlayer::estimateResult(BOARD& board) {
 AIMoves AIPlayer::max(BOARD board, COLOR color, int depth) {
 	std::vector<AIMoves> allMoves;
 	bool isBeat = false;
+	depth -= 1;
+	
 	for(int i=0; i<8; i++)
 		for(int j=0; j<8; j++)
-			if(board.get(i,j).color == color) {		
-				possibleMoves(board, board.set(i,j), allMoves, isBeat);
-			   	for(AIMoves& nextMove : allMoves) { 
-					nextMove = minmaxForBestMove(nextMove.board,			
-												opositeColor(color),
-												--depth, false);	
-				} 
-			}
+			if(board.get(i,j).color == color) 
+				if(possibleBeats(board, board.set(i,j), allMoves)) 
+					isBeat = true;
+				
+	if(!isBeat)
+		for(int i=0; i<8; i++)
+			for(int j=0; j<8; j++)
+				if(board.get(i,j).color == color) 
+					possibleMoves(board, board.set(i,j), allMoves);
+	
+	for(AIMoves& nextMove : allMoves)  
+		nextMove.set(minmaxForBestMove(nextMove.board, 
+						opositeColor(color), depth, false));	
+	
 	return getMaxMoves(allMoves);
 }
 
 AIMoves AIPlayer::min(BOARD board, COLOR color, int depth) {
 	std::vector<AIMoves> allMoves;
 	bool isBeat = false;
+	depth -= 1;
+	
 	for(int i=0; i<8; i++)
 		for(int j=0; j<8; j++)
-			if(board.get(i,j).color == color) {		
-				possibleMoves(board, board.set(i,j), allMoves, isBeat);
-			   	for(AIMoves& nextMove : allMoves) { 
-					nextMove = minmaxForBestMove(nextMove.board,			
-												opositeColor(color),
-												--depth, false);	
-				} 
-			}
+			if(board.get(i,j).color == color) 
+				if(possibleBeats(board, board.set(i,j), allMoves))
+					isBeat = true;
+	
+	if(!isBeat)
+		for(int i=0; i<8; i++)
+			for(int j=0; j<8; j++)
+				if(board.get(i,j).color == color) 
+					possibleMoves(board, board.set(i,j), allMoves);
+	
+	for(AIMoves& nextMove : allMoves)  
+		nextMove.set(minmaxForBestMove(nextMove.board, 
+						opositeColor(color), depth, true));			
+
 	return getMinMoves(allMoves);
 }
 
 int AIPlayer::possibleMoves(const BOARD& board, const PAWN& pawn,
-								std::vector<AIMoves>& newBoards,
-								bool& isBeat) {
-	int allMoves = 0;
-	if(pawn.type == MEN) {
-			if(isBeat) {
-				std::cout << "ONLY BEAT\n";
-				return (allMoves = allBeating(board, pawn, newBoards));
-			}else {
-				if((allMoves = allBeating(board, pawn, newBoards))) {
-					isBeat = true;
-					std::cout << "isBeat = true;\n";
-					return allMoves;
-				}
-				std::cout << "normal moves\n";
-				return allNormalMoves(board, pawn, newBoards);
-			}
-	} else if(pawn.type == KING) {
-		// if king
-		return allMoves;
-	}
-	throw 305;
-}
-
-int AIPlayer::allNormalMoves(const BOARD& board, const PAWN& pawn,
 								std::vector<AIMoves>& moves) {
 	int allMoves = 0;
-	if(pawn.color == RED) {
+	if(pawn.type == MEN) { 
+		if(pawn.color == RED) {
+			if(moveDL(board, pawn, moves)) ++allMoves;
+			if(moveDR(board, pawn, moves)) ++allMoves;
+			return allMoves;
+		} else if(pawn.color == WHITE) {
+			if(moveUL(board, pawn, moves)) ++allMoves;
+			if(moveUR(board, pawn, moves)) ++allMoves;
+			return allMoves;	
+		}
+	} else if(pawn.type == KING) {
 		if(moveDL(board, pawn, moves)) ++allMoves;
 		if(moveDR(board, pawn, moves)) ++allMoves;
-		return allMoves;
-	} else if(pawn.color == WHITE) {
 		if(moveUL(board, pawn, moves)) ++allMoves;
 		if(moveUR(board, pawn, moves)) ++allMoves;
-		return allMoves;	
 	}
 	return allMoves;
 }
 	
-int AIPlayer::allBeating(const BOARD& board, const PAWN& pawn,
+bool AIPlayer::possibleBeats(const BOARD& board, const PAWN& pawn,
 						std::vector<AIMoves>& beats) {
-	int allMoves = 0;
-	if(jumpUL(board, pawn, beats)) {
-		++allMoves; 
-	}
-	if(jumpUR(board, pawn, beats)) ++allMoves;
-	if(jumpDL(board, pawn, beats)) ++allMoves;
-	if(jumpDR(board, pawn, beats)) ++allMoves;
-	return allMoves;	
+	bool beating = false;
+	if(jumpUL(board, pawn, beats)) beating = true;
+	if(jumpUR(board, pawn, beats)) beating = true;
+	if(jumpDL(board, pawn, beats)) beating = true;
+	if(jumpDR(board, pawn, beats)) beating = true;
+	return beating;	
 }
 
 bool AIPlayer::moveUL(BOARD board, const PAWN& pawn, 
@@ -173,8 +187,8 @@ bool AIPlayer::moveUL(BOARD board, const PAWN& pawn,
 			if(board.get(x-i,y-i).type == FREE) {
 				moves.push_back(AIMoves(moveToXY(board, x, y, x-i, y-i)));
 				isMove = true;
-			} else
-				return isMove;
+			} 
+		return isMove;
 	}
 	throw 311;
 }
@@ -200,8 +214,8 @@ bool AIPlayer::moveUR(BOARD board, const PAWN& pawn,
 			if(board.get(x+i,y-i).type == FREE) {
 				moves.push_back(AIMoves(moveToXY(board, x, y, x+i, y-i)));
 				isMove = true;
-			} else 	
-				return isMove;
+			} 
+		return isMove;
 	}
 	throw 311;
 }
@@ -223,12 +237,13 @@ bool AIPlayer::moveDL(BOARD board, const PAWN& pawn,
 		return false;
 	} else if(pawn.type == KING) {
 		bool isMove = false;
-		for(int i=1; x-i>=0 && y+i<8; i++)
-			if(board.get(x-i,y+i).type == FREE) {
+		for(int i=1; x-i>=0 && y+i<8; i++) {
+				if(board.get(x-i,y+i).type == FREE) {
 				moves.push_back(AIMoves(moveToXY(board, x, y, x-i, y+i)));
 				isMove = true;
-			} else
-				return isMove;
+			} 
+		}
+		return isMove;
 	}
 	throw 311;
 }
@@ -248,14 +263,14 @@ bool AIPlayer::moveDR(BOARD board, const PAWN& pawn,
 				return false;
 		} else
 			return false;
-	} else if(pawn.type == KING) {
+	} else if(pawn.type == KING){
 		bool isMove = false;
 		for(int i=1; x+i<8 && y+i<8; i++)
 			if(board.get(x+i,y+i).type == FREE) {
 				moves.push_back(AIMoves(moveToXY(board, x, y, x+i, y+i)));
 				isMove = true;
-			} else
-				return isMove;
+			}
+		return isMove;
 	}
 	throw 311;
 }
@@ -283,7 +298,7 @@ bool AIPlayer::jumpUL(BOARD board, const PAWN& pawn,
 		bool isEnemy = false;
 		for(int i=1; x-i>=0 && y-i>=0; i++) {
 			if(board.get(x-i,y-i).type != FREE) {
-				if(board.get(x-i,y-i).color != pawn.color)
+				if(board.get(x-i,y-i).color == pawn.color)
 					return false;
 				else {
 					if(isEnemy)
@@ -321,7 +336,6 @@ bool AIPlayer::jumpUR(BOARD board, const PAWN& pawn,
 				board.set(x, y).erase();
 				board.set(x+1, y-1).erase();
 				beats.push_back(AIMoves(board));
-				std::cout << "JUMP UR\n";
 				return true;
 			} else 
 				return false;
@@ -331,7 +345,7 @@ bool AIPlayer::jumpUR(BOARD board, const PAWN& pawn,
 		bool isEnemy = false;
 		for(int i=1; x+i<8 && y-i>=0; i++) {
 			if(board.get(x+i,y-i).type != FREE) {
-				if(board.get(x+i,y-i).color != pawn.color)
+				if(board.get(x+i,y-i).color == pawn.color)
 					return false;
 				else {
 					if(isEnemy)
@@ -369,7 +383,6 @@ bool AIPlayer::jumpDL(BOARD board, const PAWN& pawn,
 				board.set(x, y).erase();
 				board.set(x-1, y+1).erase();
 				beats.push_back(AIMoves(board));
-				std::cout << "JUMP DL\n";
 				return true;
 			} else 
 				return false;
@@ -379,7 +392,7 @@ bool AIPlayer::jumpDL(BOARD board, const PAWN& pawn,
 		bool isEnemy = false;
 		for(int i=1; x-i>=0 && y+i<8; i++) {
 			if(board.get(x-i,y+i).type != FREE) {
-				if(board.get(x-i,y+i).color != pawn.color)
+				if(board.get(x-i,y+i).color == pawn.color)
 					return false;
 				else {
 					if(isEnemy)
@@ -426,7 +439,7 @@ bool AIPlayer::jumpDR(BOARD board, const PAWN& pawn,
 		bool isEnemy = false;
 		for(int i=1; x+i<8 && y+i<8; i++) {
 			if(board.get(x+i,y+i).type != FREE) {
-				if(board.get(x+i,y+i).color != pawn.color)
+				if(board.get(x+i,y+i).color == pawn.color)
 					return false;
 				else {
 					if(isEnemy)
@@ -452,18 +465,28 @@ bool AIPlayer::jumpDR(BOARD board, const PAWN& pawn,
 }
 
 AIMoves AIPlayer::getMaxMoves(std::vector<AIMoves> possibleAIMoves) {
-	AIMoves best = possibleAIMoves[0];
-	for(const AIMoves& move : possibleAIMoves) 
-		if(best < move)
-			best = move; 
+	AIMoves best = possibleAIMoves.front();
+	for(AIMoves move : possibleAIMoves)   
+		if(best < move) 
+			best = move;	
+		else if(best == move) {
+			if(rand()%2)
+				best = move;
+		}
+
 	return best;	
 }
 	
 AIMoves AIPlayer::getMinMoves(std::vector<AIMoves> possibleAIMoves) {
-	AIMoves best = possibleAIMoves[0];
-	for(const AIMoves& move : possibleAIMoves) 
+	AIMoves best = possibleAIMoves.front();
+	for(AIMoves move : possibleAIMoves) 
 		if(best > move)
-			best = move; 
+			best = move;
+		else if(best == move) {
+			if(rand()%2)
+				best = move;
+		}
+
 	return best;	
 }
 	
@@ -476,9 +499,8 @@ COLOR AIPlayer::opositeColor(COLOR color) {
 }
 	
 BOARD AIPlayer::moveToXY(BOARD board, int x, int y, int newX, int newY) {
-	PAWN pawn = board.get(x,y);
+	board.set(newX, newY) = board.get(x,y);
 	board.set(x,y).erase();
-	board.set(newX, newY) = pawn;
 	return board;
 }
 

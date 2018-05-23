@@ -36,7 +36,6 @@ class Graphic {
 		setPawnsSprite(); 
 	}
 
-
 	private:
 
 	void drawPawns();

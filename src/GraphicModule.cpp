@@ -147,8 +147,3 @@ bool Graphic::makeMove(Player* activePlayer) {
 	}
 	return true;
 }
-
-
-
-
-

@@ -5,35 +5,40 @@
 #include "Rules.h"
 #include "AIMoves.h"
 #include <vector>
+#include <ctime>
 
-#define DEPTH 1
+#define DEPTH 5 
 
 class AIPlayer {
 	COLOR AIcolor;
 
 	public:	
-	
+	void printMove(AIMoves move);  // TO DELETE	
+	void bestMoveInfo(AIMoves bestMove);
+
+
 	void set(COLOR color) { AIcolor = color; }
 	void makeMove(BOARD& board);
 
-	
-	private:
-	AIMoves minmaxForBestMove(BOARD& board, COLOR color, 
-							int depth = DEPTH, bool isMax = true);
 
-	int estimateResult(BOARD& board);
+	AIPlayer() {
+		srand(time(NULL));
+	}
+	private:
+	AIMoves minmaxForBestMove(BOARD board, COLOR color, 
+							int depth, bool isMax);
+
+	int estimateResult(BOARD board) const;
 
 	AIMoves max(BOARD board, COLOR color, int depth);
 	AIMoves min(BOARD board, COLOR color, int depth);
 
-	int possibleMoves(const BOARD& board, const PAWN& pawn,
-						std::vector<AIMoves>& newBoards, bool& isBeat);
 
-	int allNormalMoves(const BOARD& board, const PAWN& pawn,
+	int possibleMoves(const BOARD& board, const PAWN& pawn,
 						std::vector<AIMoves>& moves);
-	
-	int allBeating(const BOARD& board, const PAWN& pawn,
-					std::vector<AIMoves>& beats);
+
+	bool possibleBeats(const BOARD& board, const PAWN& pawn,
+						std::vector<AIMoves>& beats);
 	
 	bool moveUL(BOARD board, const PAWN& pawn, 
 				std::vector<AIMoves>& moves);
@@ -65,6 +70,7 @@ class AIPlayer {
 	COLOR opositeColor(COLOR color);	
 
 	BOARD moveToXY(BOARD board, int x, int y, int newX, int newY);
+
 
 };
 

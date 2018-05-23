@@ -8,38 +8,35 @@ struct AIMoves {
 	
 	int x, y, newX, newY;
 	
-	bool wasBeating;
 	int xCoord;
 	int yCoord;
 
 	AIMoves() { 	
 		xCoord = yCoord = x = y = newX = newY = -1;	 
-		wasBeating = false;	
+		score = 0;
 	}
 
+	
 	AIMoves(const BOARD& Board) {
 		board = Board;
 		x = y = newX = newY = -1;	
+		score = -99;
 	}
 
+	bool operator==(const AIMoves& nextMove) {
+		return (score==nextMove.score ? true : false);	}
+	
 	bool operator<(const AIMoves& nextMove) {
 		return score<nextMove.score;	}
 	
 	bool operator>(const AIMoves& nextMove) {
 		return score>nextMove.score;	}
 
-	
-	AIMoves& operator=(const AIMoves& nextMove) {
-		score = nextMove.score;			
-		board = nextMove.board;
-		x = nextMove.x;
-		y = nextMove.y;
-		newX = nextMove.x;
-		newY = nextMove.y;
-		return *this; 
+	void set(const AIMoves& prevMove) {
+		score = prevMove.score;
 	}
 
-	void set(const BOARD& Board) {	board = Board;	}
+	void set(const BOARD& Board) {	board = Board;  }
 
 	int calculateBestMove(const BOARD& prevBoard, COLOR color) {
 		for(int i=0; i<8; i++)

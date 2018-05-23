@@ -8,7 +8,7 @@ enum ENDGAME { NOT_END, RED_WIN=1, WHITE_WIN, DRAW };
 class RULES {
 	
 	public:
-		static ENDGAME ifEND(BOARD& board) {
+		static ENDGAME ifEND(BOARD board) {
 			if(board.countPlayersPawns(RED) == 0)
 				return WHITE_WIN;
 			else if(board.countPlayersPawns(WHITE) == 0)
