@@ -20,11 +20,13 @@ class GameEngine : private Graphic {
 	Player* playerTwo;
 	Player* activePlayer;
 	AIPlayer AIplayer;
+	AIPlayer AIsecondplayer;
+	static bool AIvsAI;
 	static bool playersSetted;
 		
 
 	void createPlayers();
-
+	void AIfight();
 
 	public:
 	

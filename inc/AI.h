@@ -7,7 +7,7 @@
 #include <vector>
 #include <ctime>
 
-#define DEPTH 12
+#define DEPTH 11
 
 class AIPlayer {
 	COLOR AIcolor;

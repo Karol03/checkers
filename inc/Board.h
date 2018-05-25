@@ -46,7 +46,9 @@ struct BOARD {
 	bool ifBeating(int oldX,  int oldY, int newX, int newY);
 	bool beatingFromPosition(int x, int y);
 	bool playerHasBeating(COLOR playerColor);
-	
+	int pawnsOnIILevel(COLOR color);
+	int pawnsOnIIILevel(COLOR color);
+	int pawnsOnIVLevel(COLOR color);
 
 	private:
 	int beatCoordX;

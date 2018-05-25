@@ -10,9 +10,9 @@ class Player {
 	const PLAYERTYPE playertype;
 	const COLOR color;
 
-	Player(PLAYERTYPE playertype, COLOR color): playertype(playertype)
-	   										  , color(color) {
-											  }			
+	Player(PLAYERTYPE playertype, COLOR color): 
+				playertype(playertype) , color(color) {
+				  }			
 
 	private:
 };

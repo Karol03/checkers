@@ -1,5 +1,4 @@
 #include "../inc/Board.h"
-#include <iostream>
 	
 bool BOARD::move(int oldX, int oldY, int newX, int newY) {
 	MOVE_TYPES playerMove = moveAllowed(oldX, oldY, newX, newY);
@@ -133,16 +132,19 @@ MOVE_TYPES BOARD::moveAllowed(int oldX, int oldY, int newX, int newY) {
 		   		case NORMAL:
 					beatCoordX = -1;
 					beatCoordY = -1;
+					xNext = yNext = -1;
 					return NORMAL;
 				case NOT_ALLOWED:
 					beatCoordX = -1;
 					beatCoordY = -1;
+					xNext = yNext = -1;
 					return NORMAL;
 				case BEATING:
 					return BEATING;
 				default:
 					beatCoordX = -1;
 					beatCoordY = -1;
+					xNext = yNext = -1;
 					return NOT_ALLOWED;
 			}
 		}
@@ -347,10 +349,9 @@ MOVE_TYPES BOARD::kingStep(int oldX, int oldY, int newX, int newY) {
 
 bool BOARD::playerHasNextBeating() {
 
-	if(beatingFromPosition(xNext, yNext)) {
-		std::cout << "NEXT BEATING? " << xNext << "." << yNext << "\n";
+	if(beatingFromPosition(xNext, yNext)) 
 		return true;
-	}
+
 	xNext = yNext = -1;
 	return false;
 }
@@ -495,6 +496,51 @@ bool BOARD::beatingFromPosition(int x, int y) {
 	return false;
 }
 
+int BOARD::pawnsOnIVLevel(COLOR color) {
+	int count = 0;
+	if(color == WHITE) {
+		for(int i=0; i<8; i++)
+			for(int j=0; j<2; j++)
+				if(coord[i][j].color == color)
+					++count;
+	} else {
+		for(int i=0; i<8; i++)
+			for(int j=6; j<8; j++)
+				if(coord[i][j].color == color)
+					++count;
+	}
+	return count;
+}
 
+int BOARD::pawnsOnIIILevel(COLOR color) {
+	int count = 0;
+	if(color == WHITE) {
+		for(int i=0; i<8; i++)
+			for(int j=2; j<4; j++)
+				if(coord[i][j].color == color)
+					++count;
+	} else {
+		for(int i=0; i<8; i++)
+			for(int j=4; j<6; j++)
+				if(coord[i][j].color == color)
+					++count;
+	}
+	return count;
+}
 
+int BOARD::pawnsOnIILevel(COLOR color) {
+	int count = 0;
+	if(color == WHITE) {
+		for(int i=0; i<8; i++)
+			for(int j=4; j<6; j++)
+				if(coord[i][j].color == color)
+					++count;
+	} else {
+		for(int i=0; i<8; i++)
+			for(int j=2; j<4; j++)
+				if(coord[i][j].color == color)
+					++count;
+	}
+	return count;
+}
 

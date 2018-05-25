@@ -1,9 +1,8 @@
 #include "../inc/AI.h"	
-#include <iostream>
 #include <random>
+#include <iostream>
 
 
-/*
 void AIPlayer::printMove(AIMoves move) {
 static int COUNT = 0;
 
@@ -16,7 +15,7 @@ static int COUNT = 0;
 	std::cout << "score: " << move.score;
 	std::cout<<"\n\n";
 }
-*/
+
 void AIPlayer::bestMoveInfo(AIMoves bestMove) {
 	std::cout << "   |BEST MOVE INFO| \n"
 			<< "s: " << bestMove.score << " | x: " 
@@ -57,37 +56,46 @@ AIMoves AIPlayer::minmaxForBestMove(BOARD board, COLOR color,
 int AIPlayer::estimateResult(BOARD board) const {	
 	int WP = 0;
 	int RP = 0;
+	int addPoints = 0;
+
 	switch(RULES::ifEND(board)) {
 		case WHITE_WIN:
 			if(AIcolor == WHITE)
-				return 50;
+				return 2000;
 			else
-				return -50;
+				return -2000;
 		
 		case RED_WIN:
 			if(AIcolor == RED)
-				return 50;
+				return 2000;
 			else
-				return -50;
+				return -2000;
 				
 		case DRAW:
 			return 0;
 
 		case NOT_END:
-			WP = board.countPlayersMENS(WHITE);
-			WP += board.countPlayersKINGS(WHITE)*5;
-			RP = board.countPlayersMENS(RED);
-			RP += board.countPlayersKINGS(RED)*5;
-			
+			WP = board.countPlayersMENS(WHITE)*3;
+			WP += board.countPlayersKINGS(WHITE)*27;
+			RP = board.countPlayersMENS(RED)*3;
+			RP += board.countPlayersKINGS(RED)*27;
+	
+			addPoints = board.pawnsOnIILevel(AIcolor)*3 +
+						board.pawnsOnIIILevel(AIcolor)*7 +
+						board.pawnsOnIVLevel(AIcolor)*19;		
+
 			if(AIcolor == WHITE)
-				return WP-RP;
+				return 30*(WP-RP)+addPoints;
 			else
-				return RP-WP;		
+				return 30*(RP-WP)+addPoints;		
 
 		default:
 			throw 209;
 	}
+
 }
+
+
 
 AIMoves AIPlayer::max(BOARD board, COLOR color, int depth, int& A, int& B) {
 	std::vector<AIMoves> allMoves;
